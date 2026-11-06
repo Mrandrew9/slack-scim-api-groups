@@ -1,0 +1,200 @@
+{
+  "info": {
+    "name": "Slack SCIM API - Groups",
+    "description": "Manage Slack IDP groups with the SCIM v1 API. Requires Enterprise Grid (or Business+) with SCIM enabled and an admin SCIM token with the `admin` scope.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{scim_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "scim_base",
+      "value": "https://api.slack.com/scim/v1"
+    },
+    {
+      "key": "scim_token",
+      "value": "xoxp-your-scim-token"
+    },
+    {
+      "key": "group_id",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": "U12345678"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create group",
+      "request": {
+        "method": "POST",
+        "description": "Copy the returned `id` into the group_id variable.",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{scim_base}}/Groups",
+          "host": [
+            "{{scim_base}}"
+          ],
+          "path": [
+            "Groups"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"schemas\": [\n    \"urn:scim:schemas:core:1.0\"\n  ],\n  \"displayName\": \"TestGroup\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "List groups",
+      "request": {
+        "method": "GET",
+        "description": "",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{scim_base}}/Groups",
+          "host": [
+            "{{scim_base}}"
+          ],
+          "path": [
+            "Groups"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get group",
+      "request": {
+        "method": "GET",
+        "description": "",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{scim_base}}/Groups/{{group_id}}",
+          "host": [
+            "{{scim_base}}"
+          ],
+          "path": [
+            "Groups",
+            "{{group_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Add member",
+      "request": {
+        "method": "PATCH",
+        "description": "",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{scim_base}}/Groups/{{group_id}}",
+          "host": [
+            "{{scim_base}}"
+          ],
+          "path": [
+            "Groups",
+            "{{group_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"schemas\": [\n    \"urn:scim:schemas:core:1.0\"\n  ],\n  \"members\": [\n    {\n      \"value\": \"{{user_id}}\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Remove member",
+      "request": {
+        "method": "PATCH",
+        "description": "",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{scim_base}}/Groups/{{group_id}}",
+          "host": [
+            "{{scim_base}}"
+          ],
+          "path": [
+            "Groups",
+            "{{group_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"schemas\": [\n    \"urn:scim:schemas:core:1.0\"\n  ],\n  \"members\": [\n    {\n      \"value\": \"{{user_id}}\",\n      \"operation\": \"delete\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Delete group",
+      "request": {
+        "method": "DELETE",
+        "description": "",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{scim_base}}/Groups/{{group_id}}",
+          "host": [
+            "{{scim_base}}"
+          ],
+          "path": [
+            "Groups",
+            "{{group_id}}"
+          ]
+        }
+      }
+    }
+  ]
+}
