@@ -6,6 +6,23 @@ This project demonstrates how to create a group in Slack using the SCIM API via 
 
 ---
 
+![Slack](https://img.shields.io/badge/Slack-SCIM%20API-4A154B?logo=slack&logoColor=white)
+![Postman](https://img.shields.io/badge/Postman-collection-FF6C37?logo=postman&logoColor=white)
+
+```mermaid
+sequenceDiagram
+    participant A as Admin (Postman)
+    participant S as Slack SCIM API
+    A->>S: POST /Groups {displayName}
+    S-->>A: 201 Created {id}
+    A->>S: PATCH /Groups/{id} add member
+    A->>S: PATCH /Groups/{id} remove member
+    A->>S: GET /Groups/{id}
+    A->>S: DELETE /Groups/{id}
+```
+
+---
+
 ## 📦 What's Included
 
 - ✅ Step-by-step instructions to create a group using Postman
