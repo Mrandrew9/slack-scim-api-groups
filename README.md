@@ -1,8 +1,10 @@
 # 🚀 Slack SCIM API – Group Creation Example (Postman)
 
-This project demonstrates how to create a group in Slack using the SCIM API via Postman.
+**Slack Enterprise Grid · SCIM 1.0 · Postman collection**
 
-> ⚠️ This feature requires a **Slack Enterprise Grid** plan with **SCIM API access enabled**.
+A reproducible example for working with Slack SCIM groups through authenticated API calls. The included Postman collection contains requests to **create, list, inspect, add/remove members, and delete** a group. Useful for administrators learning identity lifecycle operations and troubleshooting IdP-to-SaaS provisioning.
+
+> **Prerequisites:** An authorized Slack Enterprise Grid environment with SCIM access, appropriate administrative privileges, and a nonproduction group/user for testing. **Do not execute group changes against production without approval.**
 
 ---
 
@@ -22,6 +24,39 @@ sequenceDiagram
 ```
 
 ---
+
+## Architecture and use case
+
+```mermaid
+flowchart LR
+    A["Authorized admin"] --> P["Postman collection"]
+    P --> T["Bearer SCIM token<br/>from secure environment"]
+    T --> API["Slack SCIM API"]
+    API --> G["Group lifecycle"]
+    G --> C["Create / list / read"]
+    G --> M["Add / remove member"]
+    G --> D["Delete test group"]
+```
+
+This is a **manual admin/API troubleshooting reference**, not a replacement for your IdP-managed group lifecycle or an automated provisioning service. When an IdP is the source of truth, review its mappings and synchronization behavior before changing memberships directly.
+
+## Quick start: import and configure
+
+1. Download [the Postman collection](postman/slack-scim-groups.postman_collection.json) and import it using **Postman → Import**.
+2. Create a **local Postman environment** containing a sensitive `scim_token` variable. Do not replace the placeholder with a real token in the tracked collection JSON.
+3. Select your test environment. Check the collection variables shown below and use a dedicated, approved test group and user.
+4. Run **Create group** and copy the returned `id` into `group_id`.
+5. Run **Get group** or **List groups**, then **Add member** and verify the result before attempting **Remove member**.
+6. Run **Delete group** **only** on your disposable test group, after confirming the ID.
+
+| Variable | Meaning | Example / default |
+| --- | --- | --- |
+| `scim_base` | API base URL | `https://api.slack.com/scim/v1` |
+| `scim_token` | Privileged bearer token | Store as a sensitive environment variable, never in source control |
+| `group_id` | Target group ID | Set from an actual Create / Get response |
+| `user_id` | User ID for membership operations | Use an approved test user |
+
+**Expected evidence:** Preserve only redacted request names, HTTP statuses, group IDs anonymized for screenshots, and an audit narrative. The repository does **not** include live API responses or screenshots because actual tenant data and secrets must stay private.
 
 ## 📦 What's Included
 
@@ -102,7 +137,10 @@ Import [`postman/slack-scim-groups.postman_collection.json`](postman/slack-scim-
 
 In most orgs, group membership is driven by the identity provider (Okta, Entra ID) over SCIM. Calling the API directly is useful for testing IdP mappings, bulk fixes, and troubleshooting provisioning failures without waiting on a sync cycle.
 
-## 🔐 Security
+## 🔐 Security and operational notes
 
-- Never commit SCIM tokens. Store them as Postman environment secrets.
-- SCIM tokens carry org-wide admin rights, so rotate them if exposed.
+- Never commit SCIM tokens or paste them into README examples, issue comments, screenshots, or exported Postman environments. Prefer a local sensitive environment variable.
+- SCIM tokens can have broad administrative reach; use only approved credentials and rotate/revoke them if exposed.
+- Treat **Delete group** and **Remove member** as potentially disruptive changes. Validate the target group and user ID before sending requests.
+- A successful HTTP response only proves that specific API call completed; it does not establish a healthy or fully synchronized IdP provisioning flow.
+- This repository demonstrates request structure, **not** an audited production automation or a recorded live-tenant test.
